@@ -28,6 +28,8 @@ public class Visualizer {
     private final SimulationParameters simulationParameters;
     private final Vector2d equatorTopRight;
     private final Vector2d equatorBottomleft;
+    private final int squareSize;
+    private GraphicsContext map2D;
 
 //    private final int equatorBottomBorder;
 //    private final int equatorUpperBorder;
@@ -41,13 +43,13 @@ public class Visualizer {
         this.mapHeight = simulationParameters.height;
         this.equatorBottomleft = new Vector2d(0,equatorBottomBorder);
         this.equatorTopRight = new Vector2d(mapWidth - 1, equatorUpperBorder);
-//        this.squareSize = (int) (simulationParameters.windowHeight / mapHeight);
+        this.squareSize = (int) (simulationParameters.height / mapHeight);
 
 //        initialize();
 
     }
 
-//    private void initialize(){
+//    private void initialize() {
 //        Stage stage = new Stage();
 //        stage.setTitle("Simulation");
 //
@@ -67,9 +69,27 @@ public class Visualizer {
 //        Button displayDominatingButton = createDisplayDominatingButton();
 //
 //        EventHandler<MouseEvent> animalSelectHandler = e -> {
-//            Vector2d location = new Vector2d((int)(e.getSceneX() / squareSize), (int)(e.getSceneY() / squareSize));
+//            Vector2d location = new Vector2d((int) (e.getSceneX() / squareSize), (int) (e.getSceneY() / squareSize));
 //            selectAnimalAt(location);
-//    };
+//        };
+//    }
+//
+//    private Button createPauseButton(){
+//
+//        Button pauseButton = new Button("Pause");
+//
+//        pauseButton.setOnAction(actionEvent -> {
+//            if(simulation.isPaused()){
+//                simulation.pause(false);
+//                pauseButton.setText("Pause");
+//            }else{
+//                simulation.pause(true);
+//                pauseButton.setText("Resume");
+//            }
+//        });
+//
+//        return pauseButton;
+//    }
 
 
 }

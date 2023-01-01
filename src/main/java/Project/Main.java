@@ -27,7 +27,7 @@ public class Main {
         // maybe something like this
         grasses.remove(g3);
 
-        System.out.println(grasses);
+        System.out.println(2+2);
     }
 
 

@@ -50,6 +50,7 @@ public class Simulation {
         this.visualizer = new Visualizer(this, this.map, this.equatorBottomBorder, this.equatorUpperBorder, parameters);
 
         generateAnimals(parameters);
+        generateGrass(parameters);
 
     }
 
@@ -57,13 +58,18 @@ public class Simulation {
 
         if (!simulationPaused) {
             this.currentEra++;
-            update();
-//            visualizer.update();
+//            update();
+            visualizer.display();
         }
 
     }
 
     private void update() {
+
+        changeEnergyDueToMove();
+        moveAnimals();
+        eatGrass();
+        copulate();
 
     }
 
@@ -164,6 +170,9 @@ public class Simulation {
 
         junglePlants = (int) (parameters.startGrass * 0.8);
         otherPlants = (int) (parameters.startGrass * 0.2);
+
+        System.out.println(junglePlants);
+        System.out.println(otherPlants);
 
         for (int i = 0; i < junglePlants; i++) {
 

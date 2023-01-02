@@ -21,7 +21,6 @@ import javafx.stage.Stage;
 
 public class Visualizer {
 
-//    private final int squareSize;
     private final int mapWidth;
     private final int mapHeight;
     private final Simulation simulation;
@@ -44,7 +43,7 @@ public class Visualizer {
         this.mapHeight = simulationParameters.height;
         this.equatorBottomBorder = equatorBottomBorder;
         this.equatorUpperBorder = equatorUpperBorder;
-        this.squareSize = (int) (simulationParameters.height / mapHeight);
+        this.squareSize = 20;
 
         initialize();
 
@@ -59,20 +58,25 @@ public class Visualizer {
         canvas.setHeight(mapHeight * squareSize);
         map2D = canvas.getGraphicsContext2D();
 
-        Button pauseButton = createPauseButton();
+        HBox container = new HBox(canvas);
+        Scene scene = new Scene(container);
+        stage.setScene(scene);
+        stage.show();
 
-        TextField statisticsTextField = new TextField();
+//        Button pauseButton = createPauseButton();
+//
+//        TextField statisticsTextField = new TextField();
 //        Button statisticsButton = createStatisticsButton(statisticsTextField);
 
-        TextField eraTextField = new TextField();
+//        TextField eraTextField = new TextField();
 //        Button eraJumpButton = createEraJumpButton(eraTextField);
 
 //        Button displayDominatingButton = createDisplayDominatingButton();
 
-        EventHandler<MouseEvent> animalSelectHandler = e -> {
-            Vector2d location = new Vector2d((int) (e.getSceneX() / squareSize), (int) (e.getSceneY() / squareSize));
+//        EventHandler<MouseEvent> animalSelectHandler = e -> {
+//            Vector2d location = new Vector2d((int) (e.getSceneX() / squareSize), (int) (e.getSceneY() / squareSize));
 //            selectAnimalAt(location);
-        };
+//        };
     }
 
     private Button createPauseButton(){
@@ -92,6 +96,10 @@ public class Visualizer {
         return pauseButton;
     }
 
+    public void display() {
+        drawMap();
+    }
+
     private void drawMap() {
 //        background
 
@@ -99,17 +107,19 @@ public class Visualizer {
         map2D.fillRect(0, 0, mapWidth * squareSize, mapHeight * squareSize);
 
         map2D.setFill(Color.valueOf("#004400"));
-        map2D.fillRect(0, equatorBottomBorder, mapWidth * squareSize, (equatorUpperBorder - equatorBottomBorder) * squareSize);
+        map2D.fillRect(0, equatorBottomBorder * squareSize, mapWidth * squareSize, (equatorUpperBorder - equatorBottomBorder) * squareSize);
 
         map2D.setFill(Color.valueOf("#00ff00"));
         for (Grass grass: simulation.getGrasses()) {
             Vector2d position = grass.getPosition();
+            System.out.println(position);
             map2D.fillRoundRect(position.x * squareSize, position.y * squareSize, squareSize, squareSize, squareSize / 2f, squareSize / 2f);
         }
 
         for (Animal animal: simulation.getAnimals()) {
             map2D.setFill(energyToColor(animal.getEnergy()));
             Vector2d position = animal.getPosition();
+            System.out.println(position);
             map2D.fillOval(position.x * squareSize, position.y * squareSize, squareSize, squareSize);
         }
     }

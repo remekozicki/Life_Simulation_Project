@@ -8,8 +8,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Simulation {
 
     private final boolean isGlobe;
+    private int currentEra = 0;
+    private boolean simulationPaused = false;
     private final int equatorUpperBorder;
     private final int equatorBottomBorder;
+    private final Visualizer visualizer;
     private final WorldMap map;
     private final int mapWidth;
     private final int mapHeight;
@@ -44,11 +47,19 @@ public class Simulation {
         this.equatorUpperBorder = (int) (mapHeight / 2 + tenPercentOfHeight);
         this.equatorBottomBorder = (int) (mapHeight / 2 - tenPercentOfHeight);
 
+        this.visualizer = new Visualizer(this, this.map, this.equatorBottomBorder, this.equatorUpperBorder, parameters);
+
         generateAnimals(parameters);
 
     }
 
-    void run(ActionEvent actionEvent) {
+    void run(javafx.event.ActionEvent actionEvent) {
+
+        if (!simulationPaused) {
+            this.currentEra++;
+            update();
+//            visualizer.update();
+        }
 
     }
 
@@ -182,7 +193,24 @@ public class Simulation {
             }
 
         }
+    }
 
+    public boolean isPaused() {
+        return this.simulationPaused;
+    }
 
+    public void pause(boolean change) {
+        simulationPaused = change;
+    }
+
+//    public void run(javafx.event.ActionEvent actionEvent) {
+//    }
+
+    public ArrayList<Grass> getGrasses() {
+        return this.grasses;
+    }
+
+    public ArrayList<Animal> getAnimals() {
+        return this.animals;
     }
 }

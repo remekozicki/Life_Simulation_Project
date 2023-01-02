@@ -18,13 +18,14 @@ public class SimulationParameters {
     public final boolean behaviourRandomization;
     public final int genesLength;
     public final boolean isGlobe;
+    public final int millisecondsPerEra;
 
 
 
     public SimulationParameters(int width, int height, int energyLoss, int startAnimals, int startGrass, int dailyGrass,
                                 int startEnergy, int plantEnergy, int copulationEnergy, int copulationEnergyLoss,
                                 int minMutation, int maxMutation, boolean mutationRandomization,
-                                boolean behaviourRandomization, int genesLength, boolean isGlobe) {
+                                boolean behaviourRandomization, int genesLength, boolean isGlobe, int millisecondsPerEra) {
 
         this.width = width;
         this.height = height;
@@ -42,5 +43,7 @@ public class SimulationParameters {
         this.behaviourRandomization = behaviourRandomization;
         this.genesLength = genesLength;
         this.isGlobe = isGlobe;
+        this.millisecondsPerEra = millisecondsPerEra;
+
     }
 }

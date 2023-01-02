@@ -24,6 +24,9 @@ public class Simulation {
     private final AnimalCopulation animalCopulation;
     private final boolean mutationRandomization;
     private final float copulationEnergyLoss;
+    private final int dailyGrass;
+    private final int startGrass;
+    private final boolean behaviourRandomization;
     private final ArrayList<Animal> animals = new ArrayList<>();
     private final ArrayList<Grass> grasses = new ArrayList<>();
 
@@ -37,12 +40,15 @@ public class Simulation {
         this.copulationMinEnergy = parameters.copulationMinEnergy;
         this.copulationEnergyLoss = parameters.copulationEnergyLoss;
         this.mutationRandomization = parameters.mutationRandomization;
+        this.dailyGrass = parameters.dailyGrass;
+        this.startGrass = parameters.startGrass;
+        this.behaviourRandomization = parameters.behaviourRandomization;
 
         this.map = new WorldMap(mapWidth, mapHeight, isGlobe);
 
         this.animalCopulation = new AnimalCopulation(this.map, this.mutationRandomization, this.energyLoss);
 
-        int tenPercentOfHeight = (int) (this.mapHeight / 10) + 1;
+        int tenPercentOfHeight = (int) (this.mapHeight / 10);
 //        equator will be +/-20% of whole area
         this.equatorUpperBorder = (int) (mapHeight / 2 + tenPercentOfHeight);
         this.equatorBottomBorder = (int) (mapHeight / 2 - tenPercentOfHeight);
@@ -50,7 +56,7 @@ public class Simulation {
         this.visualizer = new Visualizer(this, this.map, this.equatorBottomBorder, this.equatorUpperBorder, parameters);
 
         generateAnimals(parameters);
-        generateGrass(parameters);
+        generateGrass(this.startGrass);
 
     }
 
@@ -58,7 +64,7 @@ public class Simulation {
 
         if (!simulationPaused) {
             this.currentEra++;
-//            update();
+            update();
             visualizer.display();
         }
 
@@ -70,6 +76,7 @@ public class Simulation {
         moveAnimals();
         eatGrass();
         copulate();
+        generateGrass(this.dailyGrass);
 
     }
 
@@ -92,19 +99,21 @@ public class Simulation {
     private void moveAnimals() {
         for (Animal animal: this.animals) {
             animal.move(this.energyLoss);
+            animal.nextGene(this.behaviourRandomization);
         }
     }
 
     private void changeEnergyDueToMove() {
 
-        for (Animal animal: this.animals) {
+        for (Animal animal: new ArrayList<>(animals)) {
             animal.makeOlder();
-            animal.changeEnergy(-this.energyLoss);
 
+            animal.changeEnergy(-this.energyLoss);
             if (animal.getEnergy() <= 0) {
                 this.animals.remove(animal);
                 this.deadAnimalsCounter++;
             }
+
         }
     }
 
@@ -164,21 +173,18 @@ public class Simulation {
         return ThreadLocalRandom.current().nextInt(min, max);
     }
 
-    private void generateGrass(SimulationParameters parameters){
+    private void generateGrass(int amount) {
 
         int junglePlants, otherPlants;
 
-        junglePlants = (int) (parameters.startGrass * 0.8);
-        otherPlants = (int) (parameters.startGrass * 0.2);
-
-        System.out.println(junglePlants);
-        System.out.println(otherPlants);
+        junglePlants = (int) (amount * 0.8);
+        otherPlants = (int) (amount * 0.2);
 
         for (int i = 0; i < junglePlants; i++) {
 
-            Vector2d position = this.map.randomUnoccupiedPosition(100, equatorUpperBorder, equatorBottomBorder);
+            Vector2d position = this.map.randomUnoccupiedPosition(100, equatorBottomBorder, equatorUpperBorder - 1);
             if (position != null) {
-                Grass grass = new Grass(position, parameters.plantEnergy);
+                Grass grass = new Grass(position, this.plantEnergy);
                 map.place(grass);
                 this.grasses.add(grass);
             }

@@ -1,0 +1,19 @@
+{
+  "width": 200,
+  "height": 100,
+  "energyLoss": 5,
+  "startAnimals": 15,
+  "startGrass": 36,
+  "dailyGrass": 5,
+  "startEnergy":  150,
+  "plantEnergy":  45,
+  "copulationEnergy":  30,
+  "copulationEnergyLoss":  30,
+  "minMutation": 1,
+  "maxMutation": 5,
+  "mutationRandomization": true,
+  "behaviourRandomization": true,
+  "genesLength": 10,
+  "isGlobe": true,
+  "millisecondsPerEra": 100
+}

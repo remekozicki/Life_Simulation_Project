@@ -43,7 +43,7 @@ public class Visualizer {
         this.mapHeight = simulationParameters.height;
         this.equatorBottomBorder = equatorBottomBorder;
         this.equatorUpperBorder = equatorUpperBorder;
-        this.squareSize = 20;
+        this.squareSize = 600 / simulationParameters.height;
 
         initialize();
 
@@ -107,19 +107,17 @@ public class Visualizer {
         map2D.fillRect(0, 0, mapWidth * squareSize, mapHeight * squareSize);
 
         map2D.setFill(Color.valueOf("#004400"));
-        map2D.fillRect(0, equatorBottomBorder * squareSize, mapWidth * squareSize, (equatorUpperBorder - equatorBottomBorder) * squareSize);
+        map2D.fillRect(0, (equatorBottomBorder) * squareSize, mapWidth * squareSize, (equatorUpperBorder - equatorBottomBorder) * squareSize);
 
         map2D.setFill(Color.valueOf("#00ff00"));
         for (Grass grass: simulation.getGrasses()) {
             Vector2d position = grass.getPosition();
-            System.out.println(position);
             map2D.fillRoundRect(position.x * squareSize, position.y * squareSize, squareSize, squareSize, squareSize / 2f, squareSize / 2f);
         }
 
         for (Animal animal: simulation.getAnimals()) {
             map2D.setFill(energyToColor(animal.getEnergy()));
             Vector2d position = animal.getPosition();
-            System.out.println(position);
             map2D.fillOval(position.x * squareSize, position.y * squareSize, squareSize, squareSize);
         }
     }

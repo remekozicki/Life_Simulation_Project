@@ -7,6 +7,7 @@ public class Animal implements IMapElement, Comparable<Animal> {
 
     private Vector2d previousPosition;
     private Vector2d position;
+//    private Vector2d newPosition;
     private MapDirection direction;
     private float energy;
     private int age = 0;
@@ -46,22 +47,27 @@ public class Animal implements IMapElement, Comparable<Animal> {
 
         int gene = this.genes.getGenes()[currentGene];
 
-        MapDirection newDirection = this.direction.rotateBy(gene);
+        MapDirection currDir = this.getDirection();
+        MapDirection newDirection = currDir.rotateBy(gene);
+        Vector2d currPoss = this.getPosition();
 //        boje sie
-        Vector2d newPosition = this.position.add(newDirection.toUnitVector());
-        newPosition = this.map.outOfBorders(this, energyLoss);
+        Vector2d newPosition = currPoss.add(newDirection.toUnitVector());
+        newPosition = this.map.outOfBorders(this, energyLoss, newPosition);
+
 
 //        rotating when the animal reaches a pole
         if (newPosition.equals(this.position)) {
             newDirection = newDirection.rotateBy(4);
         }
 
-        for (IPositionChangeObserver observer: observers) {
-            observer.positionChanged(this, this.position, newPosition);
-        }
+        Vector2d oldPosition = this.position;
 
         this.position = newPosition;
         this.direction = newDirection;
+
+        for (IPositionChangeObserver observer: observers) {
+            observer.positionChanged(this, oldPosition, newPosition);
+        }
     }
 
     public boolean isAt(Vector2d position) {

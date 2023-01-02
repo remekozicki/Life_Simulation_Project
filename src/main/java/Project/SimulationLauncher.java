@@ -13,12 +13,12 @@ public class SimulationLauncher extends Application {
     public void start(Stage stage) throws Exception {
 
         try {
-//            JSONParametersReader jsonReader = new JSONParametersReader();
-//            SimulationParameters simulationParameters = jsonReader.getParameters();
+            ParameterReader jsonReader = new ParameterReader();
+            SimulationParameters simulationParameters = jsonReader.getParameters();
 
-            SimulationParameters simulationParameters = new SimulationParameters(20, 20, 100,
-                    10, 25, 5, 400, 60, 50, 100,
-                    3, 3, true, true, 10, true, 1000);
+            SimulationParameters simulationParameters2 = new SimulationParameters(50, 30, 10,
+                    30, 60, 5, 400, 60, 50, 100,
+                    3, 3, true, true, 10, true, 100);
 
             SimulationEngine simulationEngine = new SimulationEngine();
             simulationEngine.start(simulationParameters);

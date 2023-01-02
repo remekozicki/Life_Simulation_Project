@@ -35,7 +35,7 @@ public class WorldMap implements IPositionChangeObserver {
     }
 
     public static int getRandomValue(int min, int max){
-        return ThreadLocalRandom.current().nextInt(min, max + 1);
+        return ThreadLocalRandom.current().nextInt(min, max);
     }
 
     public Vector2d randomUnoccupiedPosition(int maxAttempts, int bottomBorder, int upperBorder) {
@@ -53,9 +53,11 @@ public class WorldMap implements IPositionChangeObserver {
             y = getRandomValue(bottomBorder, upperBorder + 1);
             pos = new Vector2d(x, y);
             attempts++;
+
         } while (isOccupied(pos) && attempts < maxAttempts);
 
         if (attempts == maxAttempts) {
+
 //            searching manually for any free position
             for (int i = bottomBorder; i <= upperBorder; i++) {
                 for (int j = 0; j < this.width; j++) {
@@ -158,9 +160,9 @@ public class WorldMap implements IPositionChangeObserver {
     }
 
 
-    public Vector2d outOfBorders(Animal animal, float energyLoss) {
+    public Vector2d outOfBorders(Animal animal, float energyLoss, Vector2d newPosition) {
 
-        Vector2d position = animal.getPosition();
+        Vector2d position = newPosition;
         if (this.isGlobe) {
             if (position.x < 0) {
                 position = new Vector2d(this.width - 1, position.y);

@@ -88,8 +88,10 @@ public class WorldMap implements IPositionChangeObserver {
     }
 
 
-    public Object objectAt(Vector2d position) {
-        return this.animalHashMap.get(position);
+    public Animal animalAt(Vector2d position){
+        if(this.animalHashMap.get(position) == null)
+            return null;
+        return this.animalHashMap.get(position).peek();
     }
 
     public void place(IMapElement element){
@@ -115,6 +117,10 @@ public class WorldMap implements IPositionChangeObserver {
 
         if (element instanceof Animal) {
             Animal animal = (Animal) element;
+
+            if (animalHashMap.get(oldPosition) == null) {
+                return;
+            }
 
             if (animalHashMap.get(oldPosition).size() == 1) {
 //                removing whole priority queue
@@ -167,8 +173,14 @@ public class WorldMap implements IPositionChangeObserver {
             if (position.x < 0) {
                 position = new Vector2d(this.width - 1, position.y);
             }
-            else if (position.x >= this.width) {
+            if (position.x >= this.width) {
                 position = new Vector2d(0, position.y);
+            }
+            if (position.y >= this.height) {
+                position = new Vector2d(position.x, this.height - 1);
+            }
+            if (position.y < 0) {
+                position = new Vector2d(position.x, 0);
             }
 
         } else {

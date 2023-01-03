@@ -29,6 +29,7 @@ public class Simulation {
     private final boolean behaviourRandomization;
     private final ArrayList<Animal> animals = new ArrayList<>();
     private final ArrayList<Grass> grasses = new ArrayList<>();
+    private Animal selectedAnimal = null;
 
     public Simulation(SimulationParameters parameters) {
         this.mapWidth = parameters.width;
@@ -178,7 +179,13 @@ public class Simulation {
         int junglePlants, otherPlants;
 
         junglePlants = (int) (amount * 0.8);
-        otherPlants = (int) (amount * 0.2);
+
+        if (amount == 0) {
+            otherPlants = 0;
+        } else {
+//            so that there is always one plant outside the equator
+            otherPlants = Math.max((int) (amount * 0.2), 1);
+        }
 
         for (int i = 0; i < junglePlants; i++) {
 
@@ -227,5 +234,27 @@ public class Simulation {
 
     public ArrayList<Animal> getAnimals() {
         return this.animals;
+    }
+
+    public int getCurrentEra() {
+        return this.currentEra;
+    }
+
+    public int getTotalEnergy() {
+        int sum = 0;
+
+        for (Animal animal: this.animals) {
+            sum += animal.getEnergy();
+        }
+
+        return sum;
+    }
+
+    public Animal getSelectedAnimal(){
+        return selectedAnimal;
+    }
+
+    public void setSelectedAnimal(Animal selectedAnimal){
+        this.selectedAnimal = selectedAnimal;
     }
 }

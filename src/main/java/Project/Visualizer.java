@@ -31,8 +31,17 @@ public class Visualizer {
     private final int squareSize;
     private GraphicsContext map2D;
 
-//    private final int equatorBottomBorder;
-//    private final int equatorUpperBorder;
+//    text variables
+
+    private final Text eraValueText = new Text("-");
+    private final Text animalsValueText = new Text("-");
+    private final Text grassesValueText = new Text("-");
+    private final Text averageEnergyValueText = new Text("-");
+    private final Text selectedGenomeValueText = new Text("-");
+    private final Text selectedPartOfGenotypeValueText = new Text("-");
+    private final Text selectedEnergyValueText = new Text("-");
+    private final Text selectedChildrenValueText = new Text("-");
+    private final Text selectedAgeValueText = new Text("-");
 
 
     public Visualizer(Simulation simulation, WorldMap map, int equatorBottomBorder, int equatorUpperBorder, SimulationParameters simulationParameters) {
@@ -53,30 +62,84 @@ public class Visualizer {
         Stage stage = new Stage();
         stage.setTitle("Simulation");
 
+//        canvas
+//        ------------------------------------------
+
         Canvas canvas = new Canvas();
         canvas.setWidth(mapWidth * squareSize);
         canvas.setHeight(mapHeight * squareSize);
         map2D = canvas.getGraphicsContext2D();
 
-        HBox container = new HBox(canvas);
+//        ------------------------------------------
+//        pause button
+//        ------------------------------------------
+
+        Button pauseButton = createPauseButton();
+
+        HBox pauseBtn = new HBox(pauseButton);
+        pauseButton.setPrefWidth(180);
+        pauseBtn.setMinHeight(40);
+        pauseBtn.setAlignment(Pos.CENTER);
+        pauseBtn.setSpacing(25);
+        pauseBtn.setPadding(new Insets(5, 25, 5, 25));
+
+//        ------------------------------------------
+//        statistics
+//        ------------------------------------------
+
+        VBox generalInfoBox = new VBox();
+
+        Text eraTitleText = new Text("Current Era:");
+        Text animalsTitleText = new Text("Animals:");
+        Text grassesTitleText = new Text("Grasses:");
+        Text averageEnergyTitleText = new Text("Average energy:");
+
+        Text generalInfoText = new Text(10, 20, "Statistics:\n");
+        generalInfoText.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 16));
+
+        generalInfoBox.getChildren().addAll(generalInfoText, eraTitleText, eraValueText, animalsTitleText,
+                animalsValueText, grassesTitleText, grassesValueText, averageEnergyTitleText, averageEnergyValueText);
+        generalInfoBox.setPadding(new Insets(5, 10, 10, 5));
+
+//        ------------------------------------------
+//        selected animal statistics
+//        ------------------------------------------
+
+        VBox selectedInfoBox = new VBox();
+
+        Text selectedGenomeTitleText = new Text("Genotype:");
+        Text selectedPartOfGenotypeTitleText = new Text("Part:");
+        Text selectedEnergyTitleText = new Text("Energy:");
+        Text selectedChildrenTitleText = new Text("Children:");
+        Text selectedAgeTitleText = new Text("Age:");
+
+        Text selectedInfoText = new Text(10, 20, "Selected animal information:\n");
+        selectedInfoText.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 16));
+
+        selectedInfoBox.getChildren().addAll(selectedInfoText, selectedGenomeTitleText, selectedGenomeValueText,
+                selectedPartOfGenotypeTitleText, selectedPartOfGenotypeValueText, selectedEnergyTitleText,
+                selectedEnergyValueText, selectedChildrenTitleText, selectedChildrenValueText, selectedAgeTitleText,
+                selectedAgeValueText);
+
+        selectedInfoBox.setPadding(new Insets(5, 10, 10, 5));
+
+//        ------------------------------------------
+
+        VBox statsSide = new VBox(pauseBtn, generalInfoBox, selectedInfoBox);
+
+        EventHandler<MouseEvent> animalSelectHandler = e -> {
+            Vector2d location = new Vector2d((int) (e.getSceneX() / squareSize), (int) (e.getSceneY() / squareSize));
+            selectAnimalAt(location);
+        };
+
+        canvas.addEventFilter(MouseEvent.MOUSE_CLICKED, animalSelectHandler);
+
+        HBox container = new HBox(canvas, statsSide);
         Scene scene = new Scene(container);
+
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
-
-//        Button pauseButton = createPauseButton();
-//
-//        TextField statisticsTextField = new TextField();
-//        Button statisticsButton = createStatisticsButton(statisticsTextField);
-
-//        TextField eraTextField = new TextField();
-//        Button eraJumpButton = createEraJumpButton(eraTextField);
-
-//        Button displayDominatingButton = createDisplayDominatingButton();
-
-//        EventHandler<MouseEvent> animalSelectHandler = e -> {
-//            Vector2d location = new Vector2d((int) (e.getSceneX() / squareSize), (int) (e.getSceneY() / squareSize));
-//            selectAnimalAt(location);
-//        };
     }
 
     private Button createPauseButton(){
@@ -98,6 +161,7 @@ public class Visualizer {
 
     public void display() {
         drawMap();
+        getStatistics();
     }
 
     private void drawMap() {
@@ -131,6 +195,43 @@ public class Visualizer {
             return Color.color(0, 183 / 255f * energyRatio, energyRatio);
 
         return Color.color(energyRatio, 0, energyRatio);
+    }
+
+    private void getStatistics() {
+
+        eraValueText.setText(String.valueOf(simulation.getCurrentEra()));
+        animalsValueText.setText(String.valueOf(simulation.getAnimals().size()));
+        grassesValueText.setText(String.valueOf(simulation.getGrasses().size()));
+
+        if (simulation.getAnimals().size() > 0) {
+            averageEnergyValueText.setText(String.valueOf((int)(simulation.getTotalEnergy() / simulation.getAnimals().size())));
+        }
+
+    }
+
+    private void selectAnimalAt(Vector2d position){
+        simulation.setSelectedAnimal(map.animalAt(position));
+        drawMap();
+        displaySelectedAnimal();
+    }
+
+    public void displaySelectedAnimal(){
+        if (simulation.getSelectedAnimal() != null) {
+            if (simulation.getAnimals().contains(simulation.getSelectedAnimal())) {
+                map2D.setStroke(Color.valueOf("#ff0000"));
+                map2D.setLineWidth(squareSize / 3f);
+                Vector2d position = simulation.getSelectedAnimal().getPosition();
+                map2D.strokeOval(position.x * squareSize, position.y * squareSize, squareSize, squareSize);
+            }
+
+            String genomeText = simulation.getSelectedAnimal().getGenes().toString();
+
+            selectedGenomeValueText.setText(genomeText);
+            selectedPartOfGenotypeValueText.setText(String.valueOf(simulation.getSelectedAnimal().getCurrentGene()));
+            selectedEnergyValueText.setText(String.valueOf(simulation.getSelectedAnimal().getEnergy()));
+            selectedChildrenValueText.setText(String.valueOf(simulation.getSelectedAnimal().getChildren().size()));
+            selectedAgeValueText.setText(String.valueOf(simulation.getSelectedAnimal().getAge()));
+        }
     }
 
 

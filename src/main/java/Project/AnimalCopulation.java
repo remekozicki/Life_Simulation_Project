@@ -48,6 +48,8 @@ public class AnimalCopulation {
         a2.changeEnergy(-energyLoss);
 
         Animal child = new Animal(this.map, childPosition, 2 * energyLoss, childGenes);
+        a1.addChild(child);
+        a2.addChild(child);
 
         return child;
     }
